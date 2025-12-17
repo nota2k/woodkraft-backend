@@ -17,7 +17,7 @@ const api = axios.create({
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     },
-    withCredentials: false,
+    withCredentials: true, // Important pour les sessions Laravel
     timeout: 10000, // 10 secondes de timeout
 });
 
@@ -102,6 +102,13 @@ export const imageService = {
         });
     },
     delete: (path) => api.delete('/admin/images/delete', { data: { path } }),
+};
+
+// Service d'authentification
+export const authService = {
+    login: (credentials) => api.post('/auth/login', credentials),
+    logout: () => api.post('/auth/logout'),
+    getUser: () => api.get('/auth/user'),
 };
 
 export default api;

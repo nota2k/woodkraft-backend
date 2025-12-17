@@ -5,6 +5,12 @@
             <div class="flex flex-col h-full">
                 <div class="p-6 border-b border-gray-800">
                     <h1 class="text-2xl font-bold">Woodkraft Admin</h1>
+                    <button
+                        @click="handleLogout"
+                        class="mt-4 w-full text-left px-4 py-2 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors"
+                    >
+                        Déconnexion
+                    </button>
                 </div>
                 <nav class="flex-1 p-4 space-y-2">
                     <router-link
@@ -59,5 +65,20 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router';
+import { authService } from '../../services/api';
+
+const router = useRouter();
+
+const handleLogout = async () => {
+    try {
+        await authService.logout();
+        router.push('/admin/login');
+    } catch (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+        // Rediriger quand même vers login
+        router.push('/admin/login');
+    }
+};
 </script>
 

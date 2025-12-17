@@ -3,6 +3,7 @@ import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
 import AdminLayout from './components/admin/AdminLayout.vue';
+import Login from './pages/admin/Login.vue';
 import ProductsList from './pages/admin/ProductsList.vue';
 import ProductForm from './pages/admin/ProductForm.vue';
 import OrdersList from './pages/admin/OrdersList.vue';
@@ -10,8 +11,14 @@ import OrderDetail from './pages/admin/OrderDetail.vue';
 import UsersList from './pages/admin/UsersList.vue';
 import UserForm from './pages/admin/UserForm.vue';
 import Dashboard from './pages/admin/Dashboard.vue';
+import { authService } from './services/api';
 
 const routes = [
+    {
+        path: '/admin/login',
+        name: 'login',
+        component: Login,
+    },
     {
         path: '/admin',
         component: AdminLayout,
@@ -71,6 +78,43 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(),
     routes,
+});
+
+// Garde de route pour l'authentification
+router.beforeEach(async (to, from, next) => {
+    // Toutes les routes /admin nécessitent une authentification sauf /admin/login
+    const isAdminRoute = to.path.startsWith('/admin');
+    const isLoginPage = to.path === '/admin/login';
+    
+    if (isAdminRoute && !isLoginPage) {
+        try {
+            // Vérifier si l'utilisateur est connecté
+            const response = await authService.getUser();
+            if (response.data && response.data.user) {
+                next();
+            } else {
+                next('/admin/login');
+            }
+        } catch (error) {
+            // Si non authentifié, rediriger vers login
+            console.log('Non authentifié, redirection vers login');
+            next('/admin/login');
+        }
+    } else if (isLoginPage) {
+        // Si déjà sur la page login, vérifier si déjà connecté pour éviter de rester sur login
+        try {
+            const response = await authService.getUser();
+            if (response.data && response.data.user) {
+                next('/admin');
+            } else {
+                next();
+            }
+        } catch (error) {
+            next();
+        }
+    } else {
+        next();
+    }
 });
 
 // Ne monter l'app que si on est sur la page admin
