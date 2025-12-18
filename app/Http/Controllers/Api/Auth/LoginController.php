@@ -20,12 +20,6 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        // Vérifier que la session est disponible
-        if (!$request->hasSession()) {
-            return response()->json([
-                'message' => 'Session non disponible. Vérifiez la configuration.',
-            ], 500);
-        }
 
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember'))) {
             $request->session()->regenerate();

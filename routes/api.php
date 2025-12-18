@@ -19,8 +19,8 @@ Route::prefix('v1')->group(function () {
     // Route pour obtenir les produits suggérés
     Route::get('products/{id}/suggested', [ProductController::class, 'show']);
 
-    // Routes d'authentification (avec sessions)
-    Route::middleware(['web'])->group(function () {
+    // Routes d'authentification (avec sessions via middleware web)
+    Route::middleware('web')->group(function () {
         Route::post('auth/login', [LoginController::class, 'login']);
         Route::post('auth/logout', [LoginController::class, 'logout'])->middleware('auth');
         Route::get('auth/user', [LoginController::class, 'user'])->middleware('auth');
