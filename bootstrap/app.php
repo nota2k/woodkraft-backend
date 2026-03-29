@@ -16,6 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->api(prepend: [
             \Illuminate\Session\Middleware\StartSession::class,
         ]);
+
+        // Exclure les routes auth du CSRF (SPA Vue)
+        $middleware->validateCsrfTokens(except: [
+            'api/v1/auth/login',
+            'api/v1/auth/logout',
+        ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
