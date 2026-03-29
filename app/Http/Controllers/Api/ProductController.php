@@ -32,7 +32,7 @@ class ProductController extends Controller
     )]
     public function index(Request $request): JsonResponse
     {
-        $query = Product::with(['images', 'categories', 'variations']);
+        $query = Product::with(['images', 'categories', 'variations', 'material']);
 
         // Filtrage par catégorie
         if ($request->has('category_id')) {
@@ -138,7 +138,7 @@ class ProductController extends Controller
             }
         }
 
-        $product->load(['images', 'categories', 'variations']);
+        $product->load(['images', 'categories', 'variations', 'material']);
 
         return response()->json($product, 201);
     }
@@ -160,7 +160,7 @@ class ProductController extends Controller
     )]
     public function show(string $id): JsonResponse
     {
-        $product = Product::with(['images', 'categories', 'variations', 'suggestedProducts.images'])
+        $product = Product::with(['images', 'categories', 'variations', 'suggestedProducts.images', 'material'])
             ->findOrFail($id);
 
         return response()->json($product);

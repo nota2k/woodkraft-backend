@@ -14,8 +14,10 @@ class Product extends Model
         'price',
         'description',
         'reference',
-        'materials',
-        'dimensions',
+        'length',
+        'width',
+        'depth',
+        'material_id',
         'quantity',
     ];
 
@@ -54,5 +56,10 @@ class Product extends Model
     public function suggestedProducts(): BelongsToMany
     {
         return $this->belongsToMany(Product::class, 'suggested_products', 'product_id', 'suggested_product_id');
+    }
+
+    public function material(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Material::class);
     }
 }

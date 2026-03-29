@@ -41,10 +41,15 @@ class CategorySeeder extends Seeder
                 'slug' => 'commodes',
                 'description' => 'Commodes et meubles de rangement',
             ],
+            [
+                'name' => 'Bibelots',
+                'slug' => 'bibelots',
+                'description' => 'Petits objets de décoration en bois',
+            ],
         ];
 
         foreach ($categories as $category) {
-            Category::create($category);
+            Category::updateOrCreate(['slug' => $category['slug']], $category);
         }
     }
 }

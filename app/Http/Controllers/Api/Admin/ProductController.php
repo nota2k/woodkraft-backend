@@ -18,7 +18,7 @@ class ProductController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Product::with(['images', 'categories', 'variations']);
+        $query = Product::with(['categories', 'images', 'defaultImage', 'variations', 'material']);
 
         // Filtrage par catégorie
         if ($request->has('category_id')) {
@@ -52,8 +52,10 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'description' => 'required|string',
             'reference' => 'required|string|unique:products,reference',
-            'materials' => 'nullable|string',
-            'dimensions' => 'nullable|string',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'depth' => 'nullable|numeric|min:0',
+            'material_id' => 'nullable|exists:materials,id',
             'quantity' => 'required|integer|min:0',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:categories,id',
@@ -123,8 +125,10 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'description' => 'sometimes|string',
             'reference' => 'sometimes|string|unique:products,reference,' . $id,
-            'materials' => 'nullable|string',
-            'dimensions' => 'nullable|string',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'depth' => 'nullable|numeric|min:0',
+            'material_id' => 'nullable|exists:materials,id',
             'quantity' => 'sometimes|integer|min:0',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:categories,id',

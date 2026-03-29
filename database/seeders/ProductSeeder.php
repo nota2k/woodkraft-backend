@@ -140,14 +140,18 @@ class ProductSeeder extends Seeder
         foreach ($products as $productData) {
             $category = $categories->where('name', $productData['category'])->first();
             
-            $product = Product::create([
-                'title' => $productData['title'],
-                'price' => $productData['price'],
+            $product = Product::updateOrCreate(
+                ['reference' => $productData['reference']],
+                [
+                    'title' => $productData['title'],
+                    'price' => $productData['price'],
                 'description' => $productData['description'],
                 'reference' => $productData['reference'],
-                'materials' => $productData['materials'],
-                'dimensions' => $productData['dimensions'],
                 'quantity' => $productData['quantity'],
+                'length' => 120,
+                'width' => 80,
+                'depth' => 40,
+                'material_id' => \App\Models\Material::inRandomOrder()->first()->id ?? null,
             ]);
 
             // Attacher la catégorie

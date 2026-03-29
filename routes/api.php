@@ -24,6 +24,9 @@ Route::prefix('v1')->group(function () {
         Route::post('auth/login', [LoginController::class, 'login']);
         Route::post('auth/logout', [LoginController::class, 'logout'])->middleware('auth');
         Route::get('auth/user', [LoginController::class, 'user'])->middleware('auth');
+        
+        // Matériaux
+        Route::get('materials', [\App\Http\Controllers\Api\MaterialController::class, 'index']);
     });
 
     // Routes Admin (protégées par authentification avec sessions)
