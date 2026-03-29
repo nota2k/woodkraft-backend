@@ -21,12 +21,23 @@ Route::prefix('v1')->group(function () {
 
     // Routes d'authentification (avec sessions via middleware web)
     Route::middleware('web')->group(function () {
+        Route::post('auth/register', [\App\Http\Controllers\Api\Auth\RegisterController::class, 'register']);
         Route::post('auth/login', [LoginController::class, 'login']);
         Route::post('auth/logout', [LoginController::class, 'logout'])->middleware('auth');
         Route::get('auth/user', [LoginController::class, 'user'])->middleware('auth');
         
         // Matériaux
         Route::get('materials', [\App\Http\Controllers\Api\MaterialController::class, 'index']);
+    });
+
+    // Routes Client (Compte)
+    Route::prefix('customer')->middleware(['web', 'auth'])->group(function () {
+        Route::get('profile', [\App\Http\Controllers\Api\Customer\ProfileController::class, 'show']);
+        Route::put('profile', [\App\Http\Controllers\Api\Customer\ProfileController::class, 'update']);
+        Route::delete('profile', [\App\Http\Controllers\Api\Customer\ProfileController::class, 'destroy']);
+        
+        Route::get('orders', [\App\Http\Controllers\Api\Customer\OrderController::class, 'index']);
+        Route::get('orders/{id}', [\App\Http\Controllers\Api\Customer\OrderController::class, 'show']);
     });
 
     // Routes Admin (protégées par authentification avec sessions)

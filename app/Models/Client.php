@@ -16,10 +16,14 @@ class Client extends Model
         'name',
         'email',
         'phone',
-        'address',
-        'city',
-        'zip_code',
-        'country',
+        'shipping_address',
+        'shipping_city',
+        'shipping_zip_code',
+        'shipping_country',
+        'billing_address',
+        'billing_city',
+        'billing_zip_code',
+        'billing_country',
     ];
 
     public function user(): BelongsTo
@@ -29,7 +33,6 @@ class Client extends Model
 
     public function orders(): HasMany
     {
-        // For now, orders are linked to users, but let's imagine clients have orders too
         return $this->hasMany(Order::class, 'user_id', 'user_id');
     }
 }
