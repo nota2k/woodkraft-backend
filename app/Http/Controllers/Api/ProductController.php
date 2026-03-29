@@ -8,6 +8,7 @@ use App\Models\ProductImage;
 use App\Models\Variation;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
 
@@ -100,7 +101,7 @@ class ProductController extends Controller
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:categories,id',
             'images' => 'nullable|array',
-            'images.*' => 'string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:20480',
             'variations' => 'nullable|array',
             'variations.*.variation_id' => 'exists:variations,id',
             'variations.*.quantity' => 'integer|min:0',
@@ -114,11 +115,14 @@ class ProductController extends Controller
         }
 
         // Ajouter les images
-        if (isset($validated['images']) && count($validated['images']) > 0) {
-            foreach ($validated['images'] as $index => $imagePath) {
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $file) {
+                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('products', $filename, 'public');
+
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_path' => $imagePath,
+                    'image_path' => Storage::disk('public')->url($path),
                     'is_default' => $index === 0,
                     'order' => $index,
                 ]);
@@ -206,7 +210,10 @@ class ProductController extends Controller
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:categories,id',
             'images' => 'nullable|array',
-            'images.*' => 'string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:20480',
+            'delete_images' => 'nullable|array',
+            'delete_images.*' => 'exists:product_images,id',
+            'default_image_id' => 'nullable|integer|exists:product_images,id',
             'variations' => 'nullable|array',
             'variations.*.variation_id' => 'exists:variations,id',
             'variations.*.quantity' => 'integer|min:0',
@@ -219,17 +226,38 @@ class ProductController extends Controller
             $product->categories()->sync($validated['category_ids']);
         }
 
-        // Mettre à jour les images
-        if (isset($validated['images'])) {
-            $product->images()->delete();
-            foreach ($validated['images'] as $index => $imagePath) {
+        // Supprimer les images marquées
+        if ($request->has('delete_images')) {
+            $imagesToDelete = ProductImage::whereIn('id', $request->delete_images)->get();
+            foreach ($imagesToDelete as $image) {
+                // Optionnel: supprimer le fichier physique
+                // $path = str_replace(url('/storage'), '', $image->image_path);
+                // Storage::disk('public')->delete($path);
+                $image->delete();
+            }
+        }
+
+        // Ajouter de nouvelles images (append)
+        if ($request->hasFile('images')) {
+            $lastOrder = $product->images()->max('order') ?? -1;
+            foreach ($request->file('images') as $index => $file) {
+                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+                $path = $file->storeAs('products', $filename, 'public');
+
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image_path' => $imagePath,
-                    'is_default' => $index === 0,
-                    'order' => $index,
+                    'image_path' => Storage::disk('public')->url($path),
+                    'is_default' => false, // Géré par default_image_id après
+                    'order' => $lastOrder + $index + 1,
                 ]);
             }
+        }
+
+        // Mettre à jour l'image par défaut
+        if ($request->has('default_image_id')) {
+            $product->images()->update(['is_default' => false]);
+            ProductImage::where('id', $request->default_image_id)
+                ->update(['is_default' => true]);
         }
 
         // Mettre à jour les variations
