@@ -38,7 +38,11 @@ Route::prefix('v1')->group(function () {
         
         Route::get('orders', [\App\Http\Controllers\Api\Customer\OrderController::class, 'index']);
         Route::get('orders/{id}', [\App\Http\Controllers\Api\Customer\OrderController::class, 'show']);
-    });
+        // Panier persistant
+    Route::get('/cart', [App\Http\Controllers\Api\CartController::class, 'index']);
+    Route::post('/cart/sync', [App\Http\Controllers\Api\CartController::class, 'sync']);
+    Route::delete('/cart', [App\Http\Controllers\Api\CartController::class, 'clear']);
+});
 
     // Routes Admin (protégées par authentification avec sessions)
     Route::prefix('admin')->middleware(['web', 'auth'])->group(function () {
