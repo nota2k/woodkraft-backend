@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Exclure les routes auth du CSRF (SPA Vue)
         $middleware->validateCsrfTokens(except: [
             'api/v1/auth/login',
+            'api/v1/auth/register',
             'api/v1/auth/logout',
             'api/v1/admin/*',
         ]);
