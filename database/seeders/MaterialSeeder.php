@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Material;
 use Illuminate\Database\Seeder;
 
 class MaterialSeeder extends Seeder
@@ -12,17 +12,10 @@ class MaterialSeeder extends Seeder
      */
     public function run(): void
     {
-        $materials = [
-            'Hêtre',
-            'Chêne',
-            'Noyer',
-            'Composite',
-        ];
+        $materials = ["Hêtre", "Noyer", "Composite", "Chêne"];
 
-        foreach ($materials as $material) {
-            \App\Models\Material::firstOrCreate([
-                'name' => $material,
-            ]);
+        foreach ($materials as $name) {
+            Material::firstOrCreate(['name' => $name]);
         }
     }
 }
