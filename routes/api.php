@@ -24,7 +24,8 @@ Route::prefix('v1')->group(function () {
         Route::post('auth/register', [\App\Http\Controllers\Api\Auth\RegisterController::class, 'register']);
         Route::post('auth/login', [LoginController::class, 'login']);
         Route::post('auth/logout', [LoginController::class, 'logout'])->middleware('auth');
-        Route::get('auth/user', [LoginController::class, 'user'])->middleware('auth');
+        // Pas de middleware auth : invité = 200 { user: null } (évite un 401 bruyant dans la console du navigateur)
+        Route::get('auth/user', [LoginController::class, 'user']);
         
         // Matériaux
         Route::get('materials', [\App\Http\Controllers\Api\MaterialController::class, 'index']);

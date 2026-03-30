@@ -9,7 +9,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 <!-- MEMORY_BANK_AUTO_START -->
 ## Métadonnées
 
-- **Dernière génération** : 2026-03-30T17:45:05.905Z
+- **Dernière génération** : 2026-03-30T18:14:02.831Z
 - **Racine app** : `/Users/nellybabillon/Sites/woodkraft-app/woodkraft-backend` (`woodkraft-backend`)
 
 ## Stack (extraits)
@@ -30,7 +30,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 
 - Fichiers PHP dans `app/` : **27**
 - Contrôleurs (`app/Http/Controllers`) : **13**
-- Migrations : **19**
+- Migrations : **20**
 
 ## Lignes de routes `routes/api.php` (aperçu)
 
@@ -42,7 +42,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 - `Route::post('auth/register', [\App\Http\Controllers\Api\Auth\RegisterController::class, 'register']);`
 - `Route::post('auth/login', [LoginController::class, 'login']);`
 - `Route::post('auth/logout', [LoginController::class, 'logout'])->middleware('auth');`
-- `Route::get('auth/user', [LoginController::class, 'user'])->middleware('auth');`
+- `Route::get('auth/user', [LoginController::class, 'user']);`
 - `Route::get('materials', [\App\Http\Controllers\Api\MaterialController::class, 'index']);`
 - `Route::prefix('customer')->middleware(['web', 'auth'])->group(function () {`
 - `Route::get('profile', [\App\Http\Controllers\Api\Customer\ProfileController::class, 'show']);`

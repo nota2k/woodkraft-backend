@@ -48,7 +48,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Utilisateur connecté
+     * Utilisateur de la session (ou null si non connecté). Toujours 200 pour l’hydratation SPA.
      */
     public function user(Request $request): JsonResponse
     {
