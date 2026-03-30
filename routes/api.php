@@ -43,6 +43,7 @@ Route::prefix('v1')->group(function () {
         
         Route::get('orders', [\App\Http\Controllers\Api\Customer\OrderController::class, 'index']);
         Route::get('orders/{id}', [\App\Http\Controllers\Api\Customer\OrderController::class, 'show']);
+        Route::post('checkout/confirm', [CheckoutController::class, 'confirm']);
         // Panier persistant
     Route::get('/cart', [App\Http\Controllers\Api\CartController::class, 'index']);
     Route::post('/cart/sync', [App\Http\Controllers\Api\CartController::class, 'sync']);

@@ -9,7 +9,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 <!-- MEMORY_BANK_AUTO_START -->
 ## Métadonnées
 
-- **Dernière génération** : 2026-03-30T22:27:47.586Z
+- **Dernière génération** : 2026-03-30T23:02:46.473Z
 - **Racine app** : `/Users/nellybabillon/Sites/woodkraft-app/woodkraft-backend` (`woodkraft-backend`)
 
 ## Stack (extraits)
@@ -50,6 +50,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 - `Route::delete('profile', [\App\Http\Controllers\Api\Customer\ProfileController::class, 'destroy']);`
 - `Route::get('orders', [\App\Http\Controllers\Api\Customer\OrderController::class, 'index']);`
 - `Route::get('orders/{id}', [\App\Http\Controllers\Api\Customer\OrderController::class, 'show']);`
+- `Route::post('checkout/confirm', [CheckoutController::class, 'confirm']);`
 - `Route::get('/cart', [App\Http\Controllers\Api\CartController::class, 'index']);`
 - `Route::post('/cart/sync', [App\Http\Controllers\Api\CartController::class, 'sync']);`
 - `Route::delete('/cart', [App\Http\Controllers\Api\CartController::class, 'clear']);`
