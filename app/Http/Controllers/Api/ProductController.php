@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use OpenApi\Attributes as OA;
+use Intervention\Image\Laravel\Facades\Image;
+
 
 class ProductController extends Controller
 {
@@ -45,7 +47,7 @@ class ProductController extends Controller
         if ($request->has('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%');
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -69,8 +71,10 @@ class ProductController extends Controller
                     new OA\Property(property: 'price', type: 'number', format: 'float', example: 899.99),
                     new OA\Property(property: 'description', type: 'string', example: 'Magnifique table en chêne massif'),
                     new OA\Property(property: 'reference', type: 'string', example: 'TAB-001'),
-                    new OA\Property(property: 'materials', type: 'string', nullable: true, example: 'Chêne massif'),
-                    new OA\Property(property: 'dimensions', type: 'string', nullable: true, example: '200x100x75 cm'),
+                    new OA\Property(property: 'length', type: 'number', nullable: true, example: 200.0),
+                    new OA\Property(property: 'width', type: 'number', nullable: true, example: 100.0),
+                    new OA\Property(property: 'depth', type: 'number', nullable: true, example: 75.0),
+                    new OA\Property(property: 'material_id', type: 'integer', nullable: true, example: 1),
                     new OA\Property(property: 'quantity', type: 'integer', example: 5),
                     new OA\Property(property: 'category_ids', type: 'array', items: new OA\Items(type: 'integer')),
                     new OA\Property(property: 'images', type: 'array', items: new OA\Items(type: 'string')),
@@ -95,8 +99,10 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'description' => 'required|string',
             'reference' => 'required|string|unique:products,reference',
-            'materials' => 'nullable|string',
-            'dimensions' => 'nullable|string',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'depth' => 'nullable|numeric|min:0',
+            'material_id' => 'nullable|exists:materials,id',
             'quantity' => 'required|integer|min:0',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:categories,id',
@@ -117,8 +123,21 @@ class ProductController extends Controller
         // Ajouter les images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $file) {
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public');
+                // 1. Générer un nom de fichier avec l'extension .webp
+                $filename = Str::uuid() . '.webp';
+                $path = 'products/' . $filename;
+
+                // 2. Lire l'image, la convertir en WebP et la compresser
+                $image = Image::decode($file);
+                
+                // Optionnel : Redimensionner si l'image est trop grande (ex: max 1200px)
+                $image->scale(width: 1200);
+
+                // 3. Encoder en WebP avec une qualité de 80%
+                $encoded = $image->encodeUsingFormat(\Intervention\Image\Format::WEBP, quality: 80);
+
+                // 4. Enregistrer sur le disque public
+                Storage::disk('public')->put($path, (string) $encoded);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -184,8 +203,10 @@ class ProductController extends Controller
                     new OA\Property(property: 'price', type: 'number', format: 'float'),
                     new OA\Property(property: 'description', type: 'string'),
                     new OA\Property(property: 'reference', type: 'string'),
-                    new OA\Property(property: 'materials', type: 'string', nullable: true),
-                    new OA\Property(property: 'dimensions', type: 'string', nullable: true),
+                    new OA\Property(property: 'length', type: 'number', nullable: true),
+                    new OA\Property(property: 'width', type: 'number', nullable: true),
+                    new OA\Property(property: 'depth', type: 'number', nullable: true),
+                    new OA\Property(property: 'material_id', type: 'integer', nullable: true),
                     new OA\Property(property: 'quantity', type: 'integer'),
                 ]
             )
@@ -204,8 +225,10 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'description' => 'sometimes|string',
             'reference' => 'sometimes|string|unique:products,reference,' . $id,
-            'materials' => 'nullable|string',
-            'dimensions' => 'nullable|string',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'depth' => 'nullable|numeric|min:0',
+            'material_id' => 'nullable|exists:materials,id',
             'quantity' => 'sometimes|integer|min:0',
             'category_ids' => 'nullable|array',
             'category_ids.*' => 'exists:categories,id',
@@ -241,13 +264,26 @@ class ProductController extends Controller
         if ($request->hasFile('images')) {
             $lastOrder = $product->images()->max('order') ?? -1;
             foreach ($request->file('images') as $index => $file) {
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public');
+                // 1. Générer un nom de fichier avec l'extension .webp
+                $filename = Str::uuid() . '.webp';
+                $path = 'products/' . $filename;
+
+                // 2. Lire l'image, la convertir en WebP et la compresser
+                $image = Image::decode($file);
+                
+                // Optionnel : Redimensionner si l'image est trop grande (ex: max 1200px)
+                $image->scale(width: 1200);
+
+                // 3. Encoder en WebP avec une qualité de 80%
+                $encoded = $image->encodeUsingFormat(\Intervention\Image\Format::WEBP, quality: 80);
+
+                // 4. Enregistrer sur le disque public
+                Storage::disk('public')->put($path, (string) $encoded);
 
                 ProductImage::create([
                     'product_id' => $product->id,
                     'image_path' => Storage::disk('public')->url($path),
-                    'is_default' => false, // Géré par default_image_id après
+                    'is_default' => false,
                     'order' => $lastOrder + $index + 1,
                 ]);
             }

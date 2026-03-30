@@ -15,6 +15,142 @@
         }
     ],
     "paths": {
+        "/api/v1/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Créer un compte client",
+                "description": "Inscription d'un nouveau client",
+                "operationId": "ff564de52b6fcd86070c75342a9d31f0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jean Dupont"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jean@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Compte créé"
+                    },
+                    "422": {
+                        "description": "Données invalides"
+                    }
+                }
+            }
+        },
+        "/api/customer/cart": {
+            "get": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Récupérer le panier du client connecté",
+                "description": "Get user's cart items",
+                "operationId": "fbc5c2a8e7c0fb06aedfdf2ef2219200",
+                "responses": {
+                    "200": {
+                        "description": "Articles du panier"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Vider le panier",
+                "description": "Clear cart",
+                "operationId": "f77f1e3ad9d80243d30c412a0fa70d34",
+                "responses": {
+                    "200": {
+                        "description": "Panier vidé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/customer/cart/sync": {
+            "post": {
+                "tags": [
+                    "Cart"
+                ],
+                "summary": "Synchroniser le panier complet",
+                "description": "Sync full cart from frontend",
+                "operationId": "1769be02b7cdadd316229a63efb0a09f",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "items": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "productId": {
+                                                    "type": "integer"
+                                                },
+                                                "quantity": {
+                                                    "type": "integer"
+                                                },
+                                                "selectedColor": {
+                                                    "type": "object",
+                                                    "nullable": true
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Panier synchronisé"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/v1/categories": {
             "get": {
                 "tags": [
@@ -175,6 +311,21 @@
                 }
             }
         },
+        "/api/v1/materials": {
+            "get": {
+                "tags": [
+                    "Materials"
+                ],
+                "summary": "Liste des matériaux",
+                "description": "Liste des matériaux",
+                "operationId": "b47e7ec465ea1957011b055c816f11d3",
+                "responses": {
+                    "200": {
+                        "description": "Liste des matériaux"
+                    }
+                }
+            }
+        },
         "/api/v1/products": {
             "get": {
                 "tags": [
@@ -249,14 +400,24 @@
                                         "type": "string",
                                         "example": "TAB-001"
                                     },
-                                    "materials": {
-                                        "type": "string",
-                                        "example": "Chêne massif",
+                                    "length": {
+                                        "type": "number",
+                                        "example": 200,
                                         "nullable": true
                                     },
-                                    "dimensions": {
-                                        "type": "string",
-                                        "example": "200x100x75 cm",
+                                    "width": {
+                                        "type": "number",
+                                        "example": 100,
+                                        "nullable": true
+                                    },
+                                    "depth": {
+                                        "type": "number",
+                                        "example": 75,
+                                        "nullable": true
+                                    },
+                                    "material_id": {
+                                        "type": "integer",
+                                        "example": 1,
                                         "nullable": true
                                     },
                                     "quantity": {
@@ -368,12 +529,20 @@
                                     "reference": {
                                         "type": "string"
                                     },
-                                    "materials": {
-                                        "type": "string",
+                                    "length": {
+                                        "type": "number",
                                         "nullable": true
                                     },
-                                    "dimensions": {
-                                        "type": "string",
+                                    "width": {
+                                        "type": "number",
+                                        "nullable": true
+                                    },
+                                    "depth": {
+                                        "type": "number",
+                                        "nullable": true
+                                    },
+                                    "material_id": {
+                                        "type": "integer",
                                         "nullable": true
                                     },
                                     "quantity": {
@@ -430,6 +599,18 @@
         {
             "name": "Categories",
             "description": "Gestion des catégories"
+        },
+        {
+            "name": "Auth",
+            "description": "Auth"
+        },
+        {
+            "name": "Cart",
+            "description": "Cart"
+        },
+        {
+            "name": "Materials",
+            "description": "Materials"
         }
     ]
 }

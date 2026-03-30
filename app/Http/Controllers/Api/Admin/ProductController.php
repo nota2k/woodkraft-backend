@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class ProductController extends Controller
 {
@@ -31,8 +32,8 @@ class ProductController extends Controller
         if ($request->has('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('description', 'like', '%' . $request->search . '%')
-                  ->orWhere('reference', 'like', '%' . $request->search . '%');
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhere('reference', 'like', '%' . $request->search . '%');
             });
         }
 
@@ -76,8 +77,21 @@ class ProductController extends Controller
         // Ajouter les images
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $index => $file) {
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public');
+                // 1. Générer un nom de fichier avec l'extension .webp
+                $filename = Str::uuid() . '.webp';
+                $path = 'products/' . $filename;
+
+                // 2. Lire l'image, la convertir en WebP et la compresser
+                $image = Image::decode($file);
+                
+                // Optionnel : Redimensionner si l'image est trop grande (ex: max 1200px)
+                $image->scale(width: 1200);
+
+                // 3. Encoder en WebP avec une qualité de 80%
+                $encoded = $image->encodeUsingFormat(\Intervention\Image\Format::WEBP, quality: 80);
+
+                // 4. Enregistrer sur le disque public
+                Storage::disk('public')->put($path, (string) $encoded);
 
                 ProductImage::create([
                     'product_id' => $product->id,
@@ -159,16 +173,25 @@ class ProductController extends Controller
 
         // Ajouter de nouvelles images (append)
         if ($request->hasFile('images')) {
-            $lastOrder = $product->images()->max('order') ?? -1;
             foreach ($request->file('images') as $index => $file) {
-                $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
-                $path = $file->storeAs('products', $filename, 'public');
+                // 1. Générer un nom de fichier avec l'extension .webp
+                $filename = Str::uuid() . '.webp';
+                $path = 'products/' . $filename;
+                // 2. Lire l'image, la convertir en WebP et la compresser
+                $image = Image::decode($file);
 
+                // Optionnel : Redimensionner si l'image est trop grande (ex: max 1200px)
+                $image->scale(width: 1200);
+                // 3. Encoder en WebP avec une qualité de 80% (très bon ratio poids/qualité)
+                $encoded = $image->encodeUsingFormat(\Intervention\Image\Format::WEBP, quality: 80);
+                // 4. Enregistrer sur le disque public
+                Storage::disk('public')->put($path, (string) $encoded);
+                // 5. Enregistrer en base de données
                 ProductImage::create([
                     'product_id' => $product->id,
                     'image_path' => Storage::disk('public')->url($path),
-                    'is_default' => false,
-                    'order' => $lastOrder + $index + 1,
+                    'is_default' => $index === 0,
+                    'order' => $index,
                 ]);
             }
         }
