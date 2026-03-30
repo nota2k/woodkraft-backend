@@ -12,7 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->statefulApi();
+        // On utilise l'auth session classique (middleware web + auth) pour l'API interne
+        // proxifiée par Vite en local ; statefulApi/Sanctum n'est pas nécessaire ici.
 
         // Exclure les routes auth du CSRF (SPA Vue)
         $middleware->validateCsrfTokens(except: [

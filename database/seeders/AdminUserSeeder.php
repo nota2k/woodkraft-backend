@@ -21,6 +21,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Admin',
                 'email' => 'admin',
                 'password' => Hash::make('root'),
+                'role' => 'admin',
                 'email_verified_at' => now(),
             ]);
             $this->command->info('✅ Utilisateur admin créé avec succès !');
@@ -29,6 +30,7 @@ class AdminUserSeeder extends Seeder
         } else {
             // Mettre à jour le mot de passe si l'utilisateur existe déjà
             $admin->password = Hash::make('root');
+            $admin->role = 'admin';
             $admin->save();
             $this->command->info('✅ Mot de passe de l\'utilisateur admin mis à jour !');
         }
@@ -41,6 +43,7 @@ class AdminUserSeeder extends Seeder
                 'name' => 'Webmaster',
                 'email' => 'webmaster.babillon@gmail.com',
                 'password' => Hash::make('admin123'),
+                'role' => 'admin',
                 'email_verified_at' => now(),
             ]);
             $this->command->info('✅ Utilisateur webmaster créé avec succès !');
@@ -49,6 +52,7 @@ class AdminUserSeeder extends Seeder
         } else {
             // Mettre à jour le mot de passe si l'utilisateur existe déjà
             $webmaster->password = Hash::make('admin123');
+            $webmaster->role = 'admin';
             $webmaster->save();
             $this->command->info('✅ Mot de passe de l\'utilisateur webmaster mis à jour !');
         }
