@@ -7,13 +7,14 @@ use App\Models\Material;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProductTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
+    #[Test]
     public function test_admin_can_create_product_with_all_fields(): void
     {
         // 1. Setup
@@ -56,7 +57,7 @@ class ProductTest extends TestCase
         $this->assertEquals($material->id, $product->material_id);
     }
 
-    /** @test */
+    #[Test]
     public function test_create_product_requires_title_and_price(): void
     {
         $admin = User::factory()->create();
@@ -68,7 +69,7 @@ class ProductTest extends TestCase
             ->assertJsonValidationErrors(['title', 'price', 'description', 'reference', 'quantity']);
     }
 
-    /** @test */
+    #[Test]
     public function test_admin_can_update_product_dimensions(): void
     {
         // 1. Setup
@@ -105,7 +106,7 @@ class ProductTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function test_create_product_with_invalid_material_id(): void
     {
         $admin = User::factory()->create();
