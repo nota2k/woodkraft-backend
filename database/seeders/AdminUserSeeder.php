@@ -40,15 +40,15 @@ class AdminUserSeeder extends Seeder
             User::create([
                 'name' => 'Webmaster',
                 'email' => 'webmaster.babillon@gmail.com',
-                'password' => Hash::make('root'),
+                'password' => Hash::make('admin123'),
                 'email_verified_at' => now(),
             ]);
             $this->command->info('✅ Utilisateur webmaster créé avec succès !');
             $this->command->info('   Email: webmaster.babillon@gmail.com');
-            $this->command->info('   Mot de passe: root');
+            $this->command->info('   Mot de passe: admin123');
         } else {
             // Mettre à jour le mot de passe si l'utilisateur existe déjà
-            $webmaster->password = Hash::make('root');
+            $webmaster->password = Hash::make('admin123');
             $webmaster->save();
             $this->command->info('✅ Mot de passe de l\'utilisateur webmaster mis à jour !');
         }

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\ImageController as AdminImageController;
+use App\Http\Controllers\Api\Admin\StatsController;
 use App\Http\Controllers\Api\Auth\LoginController;
 
 Route::prefix('v1')->group(function () {
@@ -47,6 +48,7 @@ Route::prefix('v1')->group(function () {
 
     // Routes Admin (protégées par authentification avec sessions)
     Route::prefix('admin')->middleware(['web', 'auth'])->group(function () {
+        Route::get('stats', StatsController::class);
         Route::apiResource('products', AdminProductController::class);
         Route::apiResource('orders', AdminOrderController::class);
         Route::apiResource('users', AdminUserController::class);

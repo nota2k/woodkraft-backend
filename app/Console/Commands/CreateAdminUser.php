@@ -20,7 +20,7 @@ class CreateAdminUser extends Command
      *
      * @var string
      */
-    protected $description = 'Crée les utilisateurs admin (admin et webmaster.babillon@gmail.com avec mot de passe: root)';
+    protected $description = 'Crée les utilisateurs admin (admin: root ; Webmaster: admin123)';
 
     /**
      * Execute the console command.
@@ -53,14 +53,14 @@ class CreateAdminUser extends Command
             User::create([
                 'name' => 'Webmaster',
                 'email' => 'webmaster.babillon@gmail.com',
-                'password' => Hash::make('root'),
+                'password' => Hash::make('admin123'),
                 'email_verified_at' => now(),
             ]);
             $this->info('✅ Utilisateur webmaster créé avec succès !');
             $this->info('   Email: webmaster.babillon@gmail.com');
-            $this->info('   Mot de passe: root');
+            $this->info('   Mot de passe: admin123');
         } else {
-            $webmaster->password = Hash::make('root');
+            $webmaster->password = Hash::make('admin123');
             $webmaster->save();
             $this->info('✅ Mot de passe de l\'utilisateur webmaster mis à jour !');
         }

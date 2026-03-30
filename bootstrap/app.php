@@ -14,9 +14,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->statefulApi();
 
-        // StartSession est déjà dans le groupe 'web'
-
-
         // Exclure les routes auth du CSRF (SPA Vue)
         $middleware->validateCsrfTokens(except: [
             'api/v1/auth/login',

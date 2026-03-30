@@ -9,7 +9,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 <!-- MEMORY_BANK_AUTO_START -->
 ## Métadonnées
 
-- **Dernière génération** : 2026-03-30T18:14:02.831Z
+- **Dernière génération** : 2026-03-30T19:07:03.787Z
 - **Racine app** : `/Users/nellybabillon/Sites/woodkraft-app/woodkraft-backend` (`woodkraft-backend`)
 
 ## Stack (extraits)
