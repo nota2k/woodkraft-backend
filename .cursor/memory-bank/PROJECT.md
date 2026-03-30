@@ -9,7 +9,7 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 <!-- MEMORY_BANK_AUTO_START -->
 ## Métadonnées
 
-- **Dernière génération** : 2026-03-30T21:58:53.082Z
+- **Dernière génération** : 2026-03-30T22:27:47.586Z
 - **Racine app** : `/Users/nellybabillon/Sites/woodkraft-app/woodkraft-backend` (`woodkraft-backend`)
 
 ## Stack (extraits)
@@ -28,9 +28,9 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 
 ## Inventaire
 
-- Fichiers PHP dans `app/` : **28**
-- Contrôleurs (`app/Http/Controllers`) : **14**
-- Migrations : **20**
+- Fichiers PHP dans `app/` : **33**
+- Contrôleurs (`app/Http/Controllers`) : **17**
+- Migrations : **23**
 
 ## Lignes de routes `routes/api.php` (aperçu)
 
@@ -53,11 +53,15 @@ _Décisions API, auth, règles métier, URLs de déploiement, contrats avec le f
 - `Route::get('/cart', [App\Http\Controllers\Api\CartController::class, 'index']);`
 - `Route::post('/cart/sync', [App\Http\Controllers\Api\CartController::class, 'sync']);`
 - `Route::delete('/cart', [App\Http\Controllers\Api\CartController::class, 'clear']);`
+- `Route::get('checkout/shipping-methods', [CheckoutController::class, 'shippingMethods']);`
+- `Route::post('checkout/pricing', [CheckoutController::class, 'pricing']);`
 - `Route::prefix('admin')->middleware(['web', 'auth'])->group(function () {`
 - `Route::get('stats', StatsController::class);`
 - `Route::apiResource('products', AdminProductController::class);`
 - `Route::apiResource('orders', AdminOrderController::class);`
 - `Route::apiResource('users', AdminUserController::class);`
+- `Route::apiResource('shipping-methods', AdminShippingMethodController::class);`
+- `Route::apiResource('promo-codes', AdminPromoCodeController::class);`
 - `Route::post('images/upload', [AdminImageController::class, 'upload']);`
 - `Route::delete('images/delete', [AdminImageController::class, 'delete']);`
 

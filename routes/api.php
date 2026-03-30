@@ -7,8 +7,11 @@ use App\Http\Controllers\Api\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Api\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\Admin\ImageController as AdminImageController;
+use App\Http\Controllers\Api\Admin\PromoCodeController as AdminPromoCodeController;
+use App\Http\Controllers\Api\Admin\ShippingMethodController as AdminShippingMethodController;
 use App\Http\Controllers\Api\Admin\StatsController;
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\CheckoutController;
 
 Route::prefix('v1')->group(function () {
     // Routes pour les produits
@@ -46,12 +49,18 @@ Route::prefix('v1')->group(function () {
     Route::delete('/cart', [App\Http\Controllers\Api\CartController::class, 'clear']);
 });
 
+    // Checkout (public)
+    Route::get('checkout/shipping-methods', [CheckoutController::class, 'shippingMethods']);
+    Route::post('checkout/pricing', [CheckoutController::class, 'pricing']);
+
     // Routes Admin (protégées par authentification avec sessions)
     Route::prefix('admin')->middleware(['web', 'auth'])->group(function () {
         Route::get('stats', StatsController::class);
         Route::apiResource('products', AdminProductController::class);
         Route::apiResource('orders', AdminOrderController::class);
         Route::apiResource('users', AdminUserController::class);
+        Route::apiResource('shipping-methods', AdminShippingMethodController::class);
+        Route::apiResource('promo-codes', AdminPromoCodeController::class);
         Route::post('images/upload', [AdminImageController::class, 'upload']);
         Route::delete('images/delete', [AdminImageController::class, 'delete']);
     });
