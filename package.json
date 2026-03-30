@@ -3,6 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
+        "memory-bank": "node .cursor/memory-bank/update-memory-bank.mjs",
         "build": "vite build",
         "dev": "vite"
     },

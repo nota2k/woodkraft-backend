@@ -1,0 +1,14 @@
+---
+description: Tests PHPUnit / Laravel pour woodkraft-backend — suivre docs/UNIT_TESTING.md
+globs: woodkraft-backend/**/*
+alwaysApply: false
+---
+
+# Tests woodkraft-backend
+
+Quand tu travailles sous `woodkraft-backend/` (API, modèles, contrôleurs, migrations) :
+
+1. Lis **`.agents/skills/unit-testing/SKILL.md`** à la racine du workspace pour les patterns généraux WoodKraft.
+2. Applique et **maintiens à jour** **`woodkraft-backend/docs/UNIT_TESTING.md`** : inventaire des tests, tableau « État de la suite », file d’attente.
+3. Après ajout ou modification de tests : `cd woodkraft-backend && composer test` (ou `php artisan test`).
+4. Préférer les tests Feature pour les routes ; Unit pour la logique sans HTTP.
